@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="Behat" default="build" basedir=".">
+    <target name="runSelenium" description="Start Server ;  stop Server">
+       <delete dir="${basedir}/report" />
+       <mkdir dir="${basedir}/report"/>
+      <parallel>
+          <antcall target="start-selenium-server"></antcall>
+          <sequential>
+              <echo taskname="waitfor" message="Wait for selenium server launch" />
+              <waitfor maxwait="10" maxwaitunit="second" checkevery="100">
+                  <http url="http://localhost:4444/selenium-server/driver/?cmd=testComplete"/>
+              </waitfor>
+                  <antcall target="selenium"></antcall>
+                  <antcall target="create-test-report"></antcall>
+                  <antcall target="stop-server"></antcall>
+          </sequential>
+      </parallel>
+   </target>
+   <target name="runSauce" description="Start Server ;  stop Server">
+       <delete dir="${basedir}/report" />
+       <mkdir dir="${basedir}/report"/>
+      <parallel>
+                  <antcall target="sauce"></antcall>
+                  <antcall target="create-test-report"></antcall>
+      </parallel>
+   </target>
+   <target name="selenium">
+    <exec dir="${basedir}" executable="behat" failonerror="true">
+     <arg line="-f junit --out ${basedir}/report"/>
+    </exec>
+   </target>
+   <target name="sauce">
+    <exec dir="${basedir}" executable="behat" failonerror="true">
+     <arg line="-c sauce.yml -f junit --out ${basedir}/report"/>
+    </exec>
+   </target>
+   <target name="start-selenium-server">
+      <java jar="${basedir}/selenium/selenium-server-standalone-2.15.0.jar" fork="true" spawn="true">
+      </java>
+   </target>
+   <target name="stop-server">
+      <get taskname="selenium-shutdown"
+          src="http://localhost:4444/selenium-server/driver/?cmd=shutDownSeleniumServer"
+          dest="${basedir}/report/server_shutdown_log.txt" ignoreerrors="true" />
+      <echo taskname="selenium-shutdown" message="DGF Errors during shutdown are expected" />
+   </target>
+   <target name="create-test-report"  
+          description="Generate reports for executed JUnit tests.">  
+       <junitreport todir="${basedir}/report">  
+          <fileset dir="${basedir}/report">  
+             <include name="TEST-*.xml"/>  
+          </fileset>  
+          <report format="frames" todir="${basedir}/report/html"/>  
+       </junitreport>  
+   </target>       
+ 
+</project>

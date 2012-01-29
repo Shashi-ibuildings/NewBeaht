@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite errors="0" failures="0" name="wikiSearch" file="/Users/sjagtap/NewBehat/features/wikiSearch.feature" tests="12" time="88.278651">
+    <testcase classname="wikiSearch" name="Search Keywords on wiki" time="42.164508">
+    </testcase>
+    <testcase classname="wikiSearch" name="Search Keywords on wiki" time="22.212657">
+    </testcase>
+    <testcase classname="wikiSearch" name="Search Keywords on wiki" time="22.557856">
+    </testcase>
+</testsuite>
